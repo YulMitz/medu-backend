@@ -139,3 +139,12 @@ exports.updatePicturePath = async (path, userId) => {
         throw new APIError(400, "user profile picture upload failed");
     }
 }
+
+exports.getProfileByUserId = async (targetUserId) => {
+    const userObjectId = mongoose.Types.ObjectId.createFromHexString(targetUserId);
+    const user = await User.findById(userObjectId);
+    if (!user) {
+        throw new APIError(400, "用戶不存在");
+    }
+    return user.profile;
+}

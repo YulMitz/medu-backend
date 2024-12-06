@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
 exports.uploadPicture = async (req, res) => {
     console.log(req.file);
     try {
-        const profilePicturePath = await userService.updatePicturePath(req.file.path, req.user.userId);
+        const profilePicturePath = await userService.updatePicturePath(req.file.path, req.body.userId);
         res.json({ profilePicturePath: profilePicturePath });
     } catch (error) {
         res.status(500).json({ message: error.message.trim() });
@@ -57,6 +57,15 @@ exports.getUserNickname = async (req, res) => {
     try {
         const nickname = await userService.getUserNicknameById(req.params.targetUserId);
         res.json({ nickname: nickname});
+    } catch (error) {
+        res.status(500).json({ message: error.message.trim() });
+    }
+}
+
+exports.getUserProfile = async (req, res) => {
+    try {
+        const profile = await userService.getProfileByUserId(req.params.targetUserId);
+        res.json({ profile: profile});
     } catch (error) {
         res.status(500).json({ message: error.message.trim() });
     }
