@@ -68,10 +68,8 @@ exports.getLatestMessage = async (userAId, userBId) => {
     if (userAId === userBId) {
         throw new APIError(400, '不能對自己進行操作');
     }
-
-    const userAObjectId = mongoose.Types.ObjectId.createFromHexString(userAId);
-    const userBObjectId = mongoose.Types.ObjectId.createFromHexString(userBId);
-
+    const userAObjectId = userAId instanceof mongoose.Types.ObjectId ? userAId : mongoose.Types.ObjectId.createFromHexString(userAId);
+    const userBObjectId = userBId instanceof mongoose.Types.ObjectId ? userBId : mongoose.Types.ObjectId.createFromHexString(userBId);
     try {
         const userA = await userService.getUserById(userAObjectId);
         const userB = await userService.getUserById(userBObjectId);

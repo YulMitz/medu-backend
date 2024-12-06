@@ -1,6 +1,7 @@
 // services/matchService.js
 const Match = require('../models/Match');
 const userService = require('../services/userService');
+const messageService = require('../services/messageService');
 const APIError = require('../errors/APIError');
 const mongoose = require('mongoose');
 
@@ -64,17 +65,22 @@ exports.getFriendListByUserId = async (userId) => {
             ]
         }).lean();
         
-        let friendIdList = new Set();
-        
-        friendList.forEach((element) => {
-            if (element.userAId == userId) {
-                friendIdList.add(element.userBId)
-            } else {
-                friendIdList.add(element.userAId)
-            }
-        });
+        let friendInfoList = [];
 
-        return Array.from(friendIdList);
+        for (let i = 0; i < friendList.length; i++) {
+            let friendId = (friendList[i].userAId == userId) ? friendList[i].userBId : friendList[i].userAId;
+            let friendNickname = await userService.getUserNicknameById(friendId);
+            let friendLatestMessage = await messageService.getLatestMessage(userId, friendId);
+            let friendObj = {
+                "friendId": friendId,
+                "friendNickname": friendNickname,
+                "friendLatestMessage": friendLatestMessage
+            };
+            
+            console.log(friendObj);
+            friendInfoList[i] = friendObj;
+        }
+        return friendInfoList;
         
     } catch (error) {
         console.error("Error fetching matches:", error);

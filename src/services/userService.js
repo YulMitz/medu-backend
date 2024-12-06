@@ -108,7 +108,7 @@ exports.getRandomUserExcludeCollection = async (excludeCollection) => {
 }
 
 exports.getUserNicknameById = async (targetUserId) => {
-    const userObjectId = mongoose.Types.ObjectId.createFromHexString(targetUserId);
+    const userObjectId = targetUserId instanceof mongoose.Types.ObjectId ? targetUserId : mongoose.Types.ObjectId.createFromHexString(targetUserId);
     const user = await User.findById(userObjectId);
     if (!user) {
         throw new APIError(400, "用戶不存在");
@@ -117,7 +117,7 @@ exports.getUserNicknameById = async (targetUserId) => {
 }
 
 exports.getProfilePicturePathByUserId = async (targetUserId) => {
-    const userObjectId = mongoose.Types.ObjectId.createFromHexString(targetUserId);
+    const userObjectId = targetUserId instanceof mongoose.Types.ObjectId ? targetUserId : mongoose.Types.ObjectId.createFromHexString(targetUserId);
     const user = await User.findById(userObjectId);
     if (!user) {
         throw new APIError(400, "用戶不存在");
@@ -126,7 +126,7 @@ exports.getProfilePicturePathByUserId = async (targetUserId) => {
 }
 
 exports.updatePicturePath = async (path, userId) => {
-    const userObjectId = mongoose.Types.ObjectId.createFromHexString(userId);
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
     const user = await User.findById(userObjectId);
     if (!user) {
         throw new APIError(400, "用戶不存在");
@@ -141,7 +141,7 @@ exports.updatePicturePath = async (path, userId) => {
 }
 
 exports.getProfileByUserId = async (targetUserId) => {
-    const userObjectId = mongoose.Types.ObjectId.createFromHexString(targetUserId);
+    const userObjectId = targetUserId instanceof mongoose.Types.ObjectId ? targetUserId : mongoose.Types.ObjectId.createFromHexString(targetUserId);
     const user = await User.findById(userObjectId);
     if (!user) {
         throw new APIError(400, "用戶不存在");
