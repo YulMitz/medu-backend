@@ -11,6 +11,9 @@ function startWebSocketServer(server) {
 
     wss.on('connection', (ws, req) => {
 
+        ws.isAlive = true;
+        ws.on('pong', heartbeat);
+
         let urlParams;
         try {
             urlParams = new URLSearchParams(req.url.split('?')[1]);
@@ -47,8 +50,10 @@ function startWebSocketServer(server) {
         // refuse multiple connect
         if (activeUsers.has(userId)) {
             console.log(`User ${userId} already connected. Overwriting previous connection.`);
-            activeUsers.get(userId).close(); // close old connect
-        }        
+            const oldConnection = activeUsers.get(userId);
+            oldConnection.terminate(); // 使用 WebSocket 的 `terminate` 方法，確保立即關閉連接
+            activeUsers.delete(userId); // 確保清理
+        }   
 
         // saved user to activeUsers
         activeUsers.set(userId, ws);
@@ -103,6 +108,22 @@ function startWebSocketServer(server) {
     });
 
     console.log('WebSocket started');
+
+    setInterval(() => {
+        wss.clients.forEach((ws) => {
+            if (!ws.isAlive) {
+                console.log('Terminating stale connection');
+                return ws.terminate(); // 關閉未響應的連接
+            }
+    
+            ws.isAlive = false;
+            ws.ping(); // 發送 ping
+        });
+    }, 60000); // 每 60 秒檢查一次
+}
+
+function heartbeat() {
+    this.isAlive = true;
 }
 
 module.exports = { startWebSocketServer };
