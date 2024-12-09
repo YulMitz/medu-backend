@@ -50,14 +50,26 @@ function startWebSocketServer(server) {
         // refuse multiple connect
         if (activeUsers.has(userId)) {
             console.log(`User ${userId} already connected. Overwriting previous connection.`);
-            const oldConnection = activeUsers.get(userId);
-            oldConnection.terminate(); // 使用 WebSocket 的 `terminate` 方法，確保立即關閉連接
-            activeUsers.delete(userId); // 確保清理
-        }   
 
-        // saved user to activeUsers
+            // 取得舊的 WebSocket 連線
+            const oldConnection = activeUsers.get(userId);
+
+            // 先從 activeUsers 中移除舊連線
+            activeUsers.delete(userId);
+            console.log(`User ${userId} removed. Active users count: ${activeUsers.size}`);
+            // 強制關閉舊連線
+            oldConnection.terminate(); 
+            console.log(`Old connection for user ${userId} terminated.`);
+
+            console.log(`ssssUser ${userId} disconnected. Active users count: ${activeUsers.size}`);
+
+        }
+        console.log(`Active users count: ${activeUsers.size}`);
+
         activeUsers.set(userId, ws);
         console.log(`user ${userId} connected`);
+        
+        console.log(`Active users count: ${activeUsers.size}`);
 
         ws.on('message', async (data) => {
             try {
@@ -98,8 +110,13 @@ function startWebSocketServer(server) {
         });
 
         ws.on('close', () => {
-            activeUsers.delete(userId);
-            console.log(`User ${userId} disconnected. Active users count: ${activeUsers.size}`);
+            if (activeUsers.get(userId) === ws) {
+                activeUsers.delete(userId);
+                console.log(`User ${userId} disconnected. Active users count: ${activeUsers.size}`);
+            } else {
+                console.log(`Close event ignored for overwritten connection of user ${userId}.`);
+                console.log(`Active users count: ${activeUsers.size}`);
+            }
         });
 
         ws.on('error', (error) => {
