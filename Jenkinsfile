@@ -40,7 +40,7 @@ pipeline {
                     sh '''
                     sudo -u shiloh npm install
                     # 若需要執行測試，啟用下一行
-                    # sudo -u shiloh npm test
+                    sudo -u shiloh npm test
                     # 使用 shiloh 用戶運行 pm2
                     sudo -u shiloh /usr/local/bin/pm2 restart /home/shiloh/repo/medu-backend/src/server.js
                     '''
