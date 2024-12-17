@@ -41,7 +41,7 @@ router.post('/login', userController.login);
 router.post('/logout', userController.logout);
 
 // upload profile picture route
-router.post('/upload', upload.single('profilePicture'), userController.uploadPicture);
+router.post('/upload', upload.single('profilePicture'), auth, userController.uploadPicture);
 
 // get user profile
 router.get('/profile/:targetUserId', auth, userController.getUserProfile);
