@@ -22,9 +22,12 @@ exports.login = async (req, res) => {
     try {
         const { username, password } = req.body;
 
-        const token = await userService.login(username, password);
+        const userInfo = await userService.login(username, password);
 
-        res.json({ token });
+        res.json({ 
+            "token" : userInfo.token,
+            "userProfile" : userInfo.userProfile
+        });
     } catch (error) {
         if(error.name === "APIError") {
             return res.status(error.statusCode).json({ message: error.message.trim() });
@@ -37,7 +40,7 @@ exports.login = async (req, res) => {
 exports.uploadPicture = async (req, res) => {
     console.log(req.file);
     try {
-        const profilePicturePath = await userService.updatePicturePath(req.file.path, req.body.userId);
+        const profilePicturePath = await userService.updatePicturePath(req.file.path, req.user.userId);
         res.json({ profilePicturePath: profilePicturePath });
     } catch (error) {
         res.status(500).json({ message: error.message.trim() });
