@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const { isTokenBlacklisted } = require('../services/userService');
 
 module.exports = (req, res, next) => {
     // Get the token from the request headers
@@ -24,6 +25,10 @@ module.exports = (req, res, next) => {
     if (!process.env.SECRET_KEY) {
         console.error('Server error: SECRET_KEY not set');
         return res.status(500).json({ message: 'Server error' });
+    }
+
+    if (token && isTokenBlacklisted(token)) {
+        return res.status(401).json({ message: 'Token has been invalidated, please log in again.' });
     }
 
     try {

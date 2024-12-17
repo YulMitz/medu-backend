@@ -3,7 +3,7 @@ const WebSocket = require('ws');
 const jwt = require('jsonwebtoken');
 const matchService = require('../services/matchService');
 const messageService = require('../services/messageService');
-
+const { isTokenBlacklisted } = require('../services/userService');
 const activeUsers = new Map(); 
 
 function startWebSocketServer(server) {
@@ -36,6 +36,12 @@ function startWebSocketServer(server) {
             decoded = jwt.verify(token, process.env.SECRET_KEY);
         } catch (error) {
             console.error('WebSocket connection rejected: Invalid token', error);
+            ws.close(1008, 'Invalid token');
+            return;
+        }
+
+        if (token && isTokenBlacklisted(token)) {
+            console.error('Token has been invalidated, please log in again.');
             ws.close(1008, 'Invalid token');
             return;
         }

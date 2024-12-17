@@ -4,6 +4,18 @@ const bcrypt = require('bcryptjs');
 const APIError = require('../errors/APIError');
 const mongoose = require('mongoose');
 
+const blacklistedTokens = new Set();
+
+// 新增 token 到黑名單
+const addTokenToBlacklist = (token) => {
+    blacklistedTokens.add(token);
+};
+
+// 檢查 token 是否在黑名單中
+exports.isTokenBlacklisted = (token) => {
+    return blacklistedTokens.has(token);
+};
+
 exports.register = async (userData) => {
     const { username, password, nickname, birthDate, gender } = userData;
     if (!username?.trim() || !password?.trim() || !nickname?.trim() || !birthDate || !gender?.trim()) {
@@ -81,6 +93,13 @@ exports.login = async (username, password) => {
     }
     
     return res;
+}
+
+exports.logout = async (token) => {
+    // 將 Token 加入黑名單
+    addTokenToBlacklist(token);
+    const res = { message: 'Logged out successfully' }
+    return res
 }
 
 exports.getUserById = async (userId) => {

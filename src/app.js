@@ -13,6 +13,9 @@ app.use(bodyParser.json());
 const cors = require('cors');
 app.use(cors());
 
+const cookieParser = require('cookie-parser');
+app.use(cookieParser());
+
 // Test .env
 console.log('MONGODB_URI:', process.env.MONGODB_URI);
 console.log('SECRET_KEY:', process.env.SECRET_KEY);
