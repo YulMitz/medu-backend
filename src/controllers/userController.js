@@ -1,4 +1,5 @@
 const userService = require('../services/userService');
+const path = require('path');
 
 // register
 exports.register = async (req, res) => {
@@ -69,7 +70,14 @@ exports.uploadPicture = async (req, res) => {
 exports.getProfilePicture = async (req, res) => {
     try {
         const profilePicturePath = await userService.getProfilePicturePathByUserId(req.params.targetUserId);
-        res.json({ profilePicturePath: profilePicturePath});
+        
+        const imagePath = path.join(__dirname, "../", profilePicturePath);
+        res.sendFile(imagePath, (err) => {
+            if (err) {
+                console.error('Error sending file:', err);
+                return res.status(404).json({ message: 'Image not found' });
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: error.message.trim() });
     }
