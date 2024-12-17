@@ -26,7 +26,8 @@ exports.login = async (req, res) => {
         const userInfo = await userService.login(username, password);
 
         res.json({ 
-            "token" : userInfo.token,
+            "accessToken" : userInfo.accessToken,
+            "refreshToken" : userInfo.refreshToken,
             "userProfile" : userInfo.userProfile
         });
     } catch (error) {
@@ -40,12 +41,12 @@ exports.login = async (req, res) => {
 
 exports.logout = async (req, res) => {
     try {
-        const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
-
-        if (!token) {
+        const accessToken = req.cookies.token || req.headers.authorization?.split(' ')[1];
+        const { refreshToken } = req.body
+        if (!accessToken && !refreshToken) {
             return res.status(400).json({ message: 'No token provided' });
         }
-        const message = await userService.logout(token);
+        const message = await userService.logout(accessToken, refreshToken);
         res.clearCookie('token'); // 清除 Cookie
         res.status(201).json({ message: message });
     } catch (error) {
@@ -56,6 +57,19 @@ exports.logout = async (req, res) => {
         res.status(500).json({ message: error.message.trim() });
     }
 };
+
+exports.getNewToken = async (req, res) => {
+    try {
+        const newAccessToken = await userService.getNewToken(req.user.userId, req.body.refreshToken);
+        res.status(201).json({ accessToken : newAccessToken });
+    } catch (error) {
+        if(error.name === "APIError") {
+            return res.status(error.statusCode).json({ message: error.message.trim() });
+        }
+        // console.error(error); // 方便調試
+        res.status(500).json({ message: error.message.trim() });
+    }
+}
 
 exports.uploadPicture = async (req, res) => {
     console.log(req.file);

@@ -71,7 +71,8 @@ describe('User Controller', () => {
     describe('login', () => {
         it('should return token when login is successful', async () => {
             const mockRes = {
-                "token" : "fake-token",
+                "accessToken" : "fake-access-token",
+                "refreshToken" : "fake-refresh-token",
                 "userProfile" : "fake-user"
             };
             userService.login.mockResolvedValue(mockRes);
@@ -84,7 +85,8 @@ describe('User Controller', () => {
                 });
 
             expect(response.status).toBe(200);
-            expect(response.body.token).toBe(mockRes.token);
+            expect(response.body.accessToken).toBe(mockRes.accessToken);
+            expect(response.body.refreshToken).toBe(mockRes.refreshToken);
             expect(response.body.userProfile).toBe(mockRes.userProfile);
         });
 

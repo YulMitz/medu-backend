@@ -5,6 +5,7 @@ const APIError = require('../errors/APIError');
 const mongoose = require('mongoose');
 
 const blacklistedTokens = new Set();
+const refreshTokenSet = new Set();
 
 // 新增 token 到黑名單
 const addTokenToBlacklist = (token) => {
@@ -83,23 +84,43 @@ exports.login = async (username, password) => {
         throw new APIError(400, "密碼錯誤");
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+    const accessToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
         expiresIn: '1h', // 1 hour expires
     });
 
+    const refreshToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
+        expiresIn: '3d', // 1 hour expires
+    });
+
+    refreshTokenSet.add(refreshToken);
+
     const res = {
-        "token" : token,
+        "accessToken" : accessToken,
+        "refreshToken" : refreshToken,
         "userProfile" : user.profile
     }
     
     return res;
 }
 
-exports.logout = async (token) => {
+exports.logout = async (accessToken, refreshToken) => {
     // 將 Token 加入黑名單
-    addTokenToBlacklist(token);
+    addTokenToBlacklist(accessToken);
+    refreshTokenSet.delete(refreshToken);
     const res = { message: 'Logged out successfully' }
     return res
+}
+
+exports.getNewToken = async (userId, refreshToken) => {
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
+
+    if (refreshTokenSet.has(refreshToken)) {
+        const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY, {
+            expiresIn: '1h', // 1 hour expires
+        });
+
+        return accessToken;
+    }
 }
 
 exports.getUserById = async (userId) => {

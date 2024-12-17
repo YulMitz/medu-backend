@@ -151,7 +151,7 @@ describe('User Service', () => {
             bcrypt.compare.mockResolvedValue(true);  // mock bcrypt compare correct
             jwt.sign.mockReturnValue('token');  // mock JWT token
             const token = await userService.login('testuser', 'password123');
-            expect(token.token).toBe('token');
+            expect(token.accessToken).toBe('token');
         });
     });
 });
