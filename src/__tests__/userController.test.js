@@ -70,8 +70,11 @@ describe('User Controller', () => {
 
     describe('login', () => {
         it('should return token when login is successful', async () => {
-            const mockToken = 'fake-jwt-token';
-            userService.login.mockResolvedValue(mockToken);
+            const mockRes = {
+                "token" : "fake-token",
+                "userProfile" : "fake-user"
+            };
+            userService.login.mockResolvedValue(mockRes);
 
             const response = await request(app)
                 .post('/login')
@@ -81,7 +84,8 @@ describe('User Controller', () => {
                 });
 
             expect(response.status).toBe(200);
-            expect(response.body.token).toBe(mockToken);
+            expect(response.body.token).toBe(mockRes.token);
+            expect(response.body.userProfile).toBe(mockRes.userProfile);
         });
 
         it('should return custom error when APIError is thrown in login', async () => {
