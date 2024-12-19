@@ -52,6 +52,6 @@ router.get('/profilepicture/:targetUserId', userController.getProfilePicture);
 // get user nickname
 router.get('/nickname/:targetUserId', userController.getUserNickname);
 
-router.get('/token', auth, userController.getNewToken);
+router.post('/token', auth, userController.getNewToken);
 
 module.exports = router;

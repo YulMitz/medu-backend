@@ -76,6 +76,22 @@ NCCU Cloud Native Project Medu Backend
 **GET** `/api/user/nickname/:targetUserId`
 
 ---
+#### 6. 刷新 token
+**POST** `/api/user/token`
+```json
+{
+  "refreshToken": "refreshToken"
+}
+```
+
+---
+#### 7. 用戶登出
+**POST** `/api/user/logout`
+```json
+{
+  "refreshToken": "refreshToken"
+}
+```
 
 ### Match API
 #### 1. 喜歡 / 不喜歡目標用戶
