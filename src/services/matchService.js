@@ -119,8 +119,11 @@ exports.getMatchCardByUserId = async (userId) => {
                 randomUser = user; // 找到符合條件的用戶
             }
         }
-
-        return randomUser.profile;
+        let matchCard = {
+            userId: randomUser._id,
+            profile: randomUser.profile
+        }
+        return matchCard;
     } catch (error) {
         console.error("Error fetching match cards:", error);
         throw new Error("Failed to fetch match cards");
