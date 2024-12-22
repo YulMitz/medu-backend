@@ -91,7 +91,7 @@ exports.getFriendListByUserId = async (userId) => {
 exports.getMatchCardByUserId = async (userId) => {
     const userObjectId = mongoose.Types.ObjectId.createFromHexString(userId);
     const checkUserSet = new Set();
-
+    checkUserSet.add(userId);
     try {
         let randomUser = null;
 
@@ -126,7 +126,7 @@ exports.getMatchCardByUserId = async (userId) => {
         return matchCard;
     } catch (error) {
         console.error("Error fetching match cards:", error);
-        throw new Error("Failed to fetch match cards");
+        throw new Error("Failed to fetch match cards" + error);
     } 
 };
 

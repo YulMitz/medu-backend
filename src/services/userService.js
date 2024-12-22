@@ -132,25 +132,6 @@ exports.getUserById = async (userId) => {
     return user;
 }
 
-exports.getRandomUserExcludeCollection = async (excludeCollection) => {
-
-    if (!(excludeCollection instanceof Set)) {
-        throw new Error("excludeCollection must be a Set");
-    }
-
-
-    const excludeArray = Array.from(excludeCollection);
-    if (excludeArray.length >= await User.countDocuments()) {
-        return null; 
-    }
-
-    const randomUser = await User.aggregate([
-        { $match: { _id: { $nin: excludeArray.map(id => mongoose.Types.ObjectId(id)) } } },
-        { $sample: { size: 1 } }
-    ]);
-
-    return randomUser.length > 0 ? randomUser[0] : null;
-}
 
 exports.getUserNicknameById = async (targetUserId) => {
     const userObjectId = targetUserId instanceof mongoose.Types.ObjectId ? targetUserId : mongoose.Types.ObjectId.createFromHexString(targetUserId);
@@ -225,4 +206,35 @@ exports.updateBio = async(userId, bio) => {
     } catch (error) {
         throw new APIError(400, "user bio update failed");
     }
+}
+
+exports.getRandomUserExcludeCollection = async (excludeCollection) => {
+
+    if (!(excludeCollection instanceof Set)) {
+        throw new Error("excludeCollection must be a Set");
+    }
+
+
+    const excludeArray = Array.from(excludeCollection);
+    if (excludeArray.length >= await User.countDocuments()) {
+        return null; 
+    }
+
+    // const randomUser = await User.aggregate([
+    //     { $match: { _id: { $nin: excludeArray.map(id => mongoose.Types.ObjectId(id)) } } },
+    //     { $sample: { size: 1 } }
+    // ]);
+
+    const excludeObjectIds = excludeArray.map(id => mongoose.Types.ObjectId.createFromHexString(id));
+
+    const randomUser = await User.aggregate([
+        { $match: { _id: { $nin: excludeObjectIds } } },
+        { $sample: { size: 1 } } // 隨機選取一個使用者
+    ]);
+
+    return randomUser.length > 0 ? randomUser[0] : null;
+}
+
+exports.getRandomMatchUser = async () => {
+
 }
