@@ -57,7 +57,7 @@ NCCU Cloud Native Project Medu Backend
 ---
 
 #### 3. 上傳照片
-**POST** `/api/user/upload`
+**POST** `/api/user/profilepicture`
 
 **需 JWT Token**
 
@@ -93,14 +93,41 @@ NCCU Cloud Native Project Medu Backend
 }
 ```
 
+---
+#### 8. 用戶更改暱稱
+**POST** `/api/user/nickname`
+```json
+{
+  "nickname": "String"
+}
+```
+
+---
+#### 9. 用戶更改密碼
+**POST** `/api/user/password`
+```json
+{
+  "password": "String"
+}
+```
+
+---
+#### 10. 用戶更改自介
+**POST** `/api/user/bio`
+```json
+{
+  "bio": "String"
+}
+```
+
 ### Match API
 #### 1. 喜歡 / 不喜歡目標用戶
 
 **需 JWT Token**
 
-喜歡 : **POST** `/api/match/like/:targetUserId`
+喜歡 : **POST** `/api/match/like`
 
-不喜歡 : **POST** `/api/match/dislike/:targetUserId`
+不喜歡 : **POST** `/api/match/dislike`
 
 ```json
 {
