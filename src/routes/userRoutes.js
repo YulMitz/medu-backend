@@ -41,7 +41,7 @@ router.post('/login', userController.login);
 router.post('/logout', userController.logout);
 
 // upload profile picture route
-router.post('/upload', upload.single('profilePicture'), auth, userController.uploadPicture);
+router.post('/profilepicture', upload.single('profilePicture'), auth, userController.uploadPicture);
 
 // get user profile
 router.get('/profile/:targetUserId', auth, userController.getUserProfile);
@@ -53,5 +53,13 @@ router.get('/profilepicture/:targetUserId', userController.getProfilePicture);
 router.get('/nickname/:targetUserId', userController.getUserNickname);
 
 router.post('/token', auth, userController.getNewToken);
+
+router.post('/nickname', auth, userController.updateNickname);
+
+router.post('/password', auth, userController.updatePassword);
+
+router.post('/bio', auth, userController.updateBio);
+
+// router.post('')
 
 module.exports = router;

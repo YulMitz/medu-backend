@@ -193,3 +193,36 @@ exports.getProfileByUserId = async (targetUserId) => {
     }
     return user.profile;
 }
+
+exports.updateNickname = async(userId, nickname) => {
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
+    const user = await User.findById(userObjectId);
+    user.profile.nickname = nickname;
+    try {
+        user.save();
+    } catch (error) {
+        throw new APIError(400, "user nickname update failed");
+    }
+}
+
+exports.updatePassword = async(userId, password) => {
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
+    const user = await User.findById(userObjectId);
+    user.password = password;
+    try {
+        user.save();
+    } catch (error) {
+        throw new APIError(400, "user password update failed");
+    }
+}
+
+exports.updateBio = async(userId, bio) => {
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
+    const user = await User.findById(userObjectId);
+    user.profile.bio = bio;
+    try {
+        user.save();
+    } catch (error) {
+        throw new APIError(400, "user bio update failed");
+    }
+}

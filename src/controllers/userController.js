@@ -114,3 +114,53 @@ exports.getUserProfile = async (req, res) => {
         res.status(500).json({ message: error.message.trim() });
     }
 }
+
+exports.updateNickname = async (req, res) => {
+    try {
+        const { nickname } = req.body;
+        await userService.updateNickname(req.user.userId, nickname);
+
+        res.status(201).json({ 
+            message: 'update nickname success',
+            nickname: nickname
+        });
+    } catch (error) {
+        if(error.name === 'APIError'){
+            return res.status(error.statusCode).json({ message: error.message.trim() });
+        }
+        return res.status(500).json({ message: error.message.trim() });
+    }
+}
+
+exports.updatePassword = async (req, res) => {
+    try {
+        const { password } = req.body;
+        await userService.updatePassword(req.user.userId, password);
+
+        res.status(201).json({ 
+            message: 'update password success'
+        });
+    } catch (error) {
+        if(error.name === 'APIError'){
+            return res.status(error.statusCode).json({ message: error.message.trim() });
+        }
+        return res.status(500).json({ message: error.message.trim() });
+    }
+}
+
+exports.updateBio = async (req, res) => {
+    try {
+        const { bio } = req.body;
+        await userService.updateBio(req.user.userId, bio);
+
+        res.status(201).json({ 
+            message: 'update bio success',
+            bio: bio
+        });
+    } catch (error) {
+        if(error.name === 'APIError'){
+            return res.status(error.statusCode).json({ message: error.message.trim() });
+        }
+        return res.status(500).json({ message: error.message.trim() });
+    }
+}
