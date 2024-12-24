@@ -25,7 +25,8 @@ exports.login = async (req, res) => {
 
         const userInfo = await userService.login(username, password);
 
-        res.json({ 
+        res.json({
+            "userId" : userInfo.userId, 
             "accessToken" : userInfo.accessToken,
             "refreshToken" : userInfo.refreshToken,
             "userProfile" : userInfo.userProfile

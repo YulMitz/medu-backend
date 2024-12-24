@@ -95,6 +95,7 @@ exports.login = async (username, password) => {
     refreshTokenSet.add(refreshToken);
 
     const res = {
+        "userId" : user._id,
         "accessToken" : accessToken,
         "refreshToken" : refreshToken,
         "userProfile" : user.profile
