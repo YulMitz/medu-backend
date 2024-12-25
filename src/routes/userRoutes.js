@@ -52,7 +52,7 @@ router.get('/profilepicture/:targetUserId', userController.getProfilePicture);
 // get user nickname
 router.get('/nickname/:targetUserId', userController.getUserNickname);
 
-router.post('/token', auth, userController.getNewToken);
+router.post('/token', userController.getNewToken);
 
 router.post('/nickname', auth, userController.updateNickname);
 
