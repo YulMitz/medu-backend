@@ -61,7 +61,7 @@ exports.logout = async (req, res) => {
 
 exports.getNewToken = async (req, res) => {
     try {
-        const newAccessToken = await userService.getNewToken(req.user.userId, req.body.refreshToken);
+        const newAccessToken = await userService.getNewToken(req.body.userId, req.body.refreshToken);
         res.status(201).json({ accessToken : newAccessToken });
     } catch (error) {
         if(error.name === "APIError") {
