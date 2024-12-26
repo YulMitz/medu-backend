@@ -91,12 +91,12 @@ exports.getFriendListByUserId = async (userId) => {
 exports.getMatchCardByUserId = async (userId) => {
     const userObjectId = mongoose.Types.ObjectId.createFromHexString(userId);
     const checkUserSet = new Set();
-
+    checkUserSet.add(userId);
     try {
         let randomUser = null;
 
         while (!randomUser) {
-            const user = await userService.getRandomUserExcludeCollection(checkUserSet);
+            const user = await userService.getRandomUserExcludeCollection(userObjectId, checkUserSet);
 
             if (!user) {
                 return null;
@@ -119,11 +119,14 @@ exports.getMatchCardByUserId = async (userId) => {
                 randomUser = user; // 找到符合條件的用戶
             }
         }
-
-        return randomUser.profile;
+        let matchCard = {
+            userId: randomUser._id,
+            profile: randomUser.profile
+        }
+        return matchCard;
     } catch (error) {
         console.error("Error fetching match cards:", error);
-        throw new Error("Failed to fetch match cards");
+        throw new Error("Failed to fetch match cards" + error);
     } 
 };
 
