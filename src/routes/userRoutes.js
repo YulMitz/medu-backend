@@ -60,6 +60,8 @@ router.post('/password', auth, userController.updatePassword);
 
 router.post('/bio', auth, userController.updateBio);
 
+router.post('/location', auth, userController.updateLocation);
+
 // router.post('')
 
 module.exports = router;

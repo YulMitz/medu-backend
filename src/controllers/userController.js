@@ -169,3 +169,21 @@ exports.updateBio = async (req, res) => {
         return res.status(500).json({ message: error.message.trim() });
     }
 }
+
+exports.updateLocation = async (req, res) => {
+    try {
+        const { county, township } = req.body;
+        await userService.updateLocation(req.user.userId, county, township);
+
+        res.status(201).json({ 
+            message: 'update location success',
+            county: county,
+            township: township
+        });
+    } catch (error) {
+        if(error.name === 'APIError'){
+            return res.status(error.statusCode).json({ message: error.message.trim() });
+        }
+        return res.status(500).json({ message: error.message.trim() });
+    }
+}
