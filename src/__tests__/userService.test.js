@@ -243,7 +243,7 @@ describe('User Service', () => {
                 expect(newToken).toBe('newAccessToken');
                 expect(jwt.sign).toHaveBeenCalledWith(
                     { userId },
-                    process.env.SECRET_KEY || 'test-secret',
+                    process.env.SECRET_KEY,
                     { expiresIn: '1m' }
                 );
             });
