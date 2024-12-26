@@ -62,6 +62,8 @@ router.post('/bio', auth, userController.updateBio);
 
 router.post('/location', auth, userController.updateLocation);
 
+router.post('/profile', auth, userController.updateProfile);
+
 // router.post('')
 
 module.exports = router;

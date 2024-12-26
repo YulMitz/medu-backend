@@ -187,3 +187,37 @@ exports.updateLocation = async (req, res) => {
         return res.status(500).json({ message: error.message.trim() });
     }
 }
+
+exports.updateProfile = async (req, res) => {
+    try {
+        let { nickname, bio, county, township } = req.body;
+        if (nickname) 
+            await userService.updateNickname(req.user.userId, nickname);
+        else 
+            nickname = "nickname was not updated";
+
+        if (bio) 
+            await userService.updateBio(req.user.userId, bio);
+        else
+            bio = "bio was not updated";
+
+        if (county && township) 
+            await userService.updateLocation(req.user.userId, county, township);
+        else
+            location = "location was not updated";
+        
+
+        res.status(201).json({ 
+            message: 'update profile success',
+            nickname: nickname,
+            bio: bio,
+            county: county,
+            township: township
+        });
+    } catch (error) {
+        if(error.name === 'APIError'){
+            return res.status(error.statusCode).json({ message: error.message.trim() });
+        }
+        return res.status(500).json({ message: error.message.trim() });
+    }
+}
