@@ -117,7 +117,7 @@ exports.getNewToken = async (userId, refreshToken) => {
 
     if (refreshTokenSet.has(refreshToken)) {
         const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY, {
-            expiresIn: '5m', // 1 hour expires
+            expiresIn: '1m', // 1 hour expires
         });
 
         return accessToken;
@@ -209,8 +209,10 @@ exports.updateBio = async(userId, bio) => {
     }
 }
 
-exports.getRandomUserExcludeCollection = async (excludeCollection) => {
-
+exports.getRandomUserExcludeCollection = async (userId, excludeCollection) => {
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
+    const user = await User.findById(userObjectId);
+    
     if (!(excludeCollection instanceof Set)) {
         throw new Error("excludeCollection must be a Set");
     }
@@ -228,14 +230,26 @@ exports.getRandomUserExcludeCollection = async (excludeCollection) => {
 
     const excludeObjectIds = excludeArray.map(id => mongoose.Types.ObjectId.createFromHexString(id));
 
+    const randomUserbyCounty = await User.aggregate([
+        { $match: { 
+            _id: { $nin: excludeObjectIds },
+            'location.county': user.county
+        } },
+        { $sample: { size: 1 } } // 隨機選取一個使用者
+    ]);
+
+    if (randomUserbyCounty) {
+        console.log("location not found match user");
+        return randomUserbyCounty[0];
+    }
+
     const randomUser = await User.aggregate([
-        { $match: { _id: { $nin: excludeObjectIds } } },
+        { $match: { 
+            _id: { $nin: excludeObjectIds },
+            'location.county': user.county
+        } },
         { $sample: { size: 1 } } // 隨機選取一個使用者
     ]);
 
     return randomUser.length > 0 ? randomUser[0] : null;
-}
-
-exports.getRandomMatchUser = async () => {
-
 }

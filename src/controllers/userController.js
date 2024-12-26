@@ -61,6 +61,10 @@ exports.logout = async (req, res) => {
 
 exports.getNewToken = async (req, res) => {
     try {
+        console.log(req.body.userId)
+        console.log("--------------------")
+        console.log(req.body.refreshToken)
+
         const newAccessToken = await userService.getNewToken(req.body.userId, req.body.refreshToken);
         res.status(201).json({ accessToken : newAccessToken });
     } catch (error) {
