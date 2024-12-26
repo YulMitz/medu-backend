@@ -54,6 +54,7 @@ const UserSchema = new mongoose.Schema({
         },
         profilePicturePath: {
             type: String,
+            default: '../uploads/2024-12-17T09:51:48.538Z1.png'
         },
         location: {
             county: {
