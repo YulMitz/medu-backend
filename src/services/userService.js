@@ -146,19 +146,13 @@ exports.getNewToken = async (userId, refreshToken) => {
     // 拋出錯誤，如果 refresh token 不存在
     if (!refreshTokenSet.has(refreshToken)) {
         throw new APIError(401, "Invalid or expired refresh token");
-    else {
+    } else {
         const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY, {
             expiresIn: '1m', // 1 hour expires
         });
 
         return accessToken;
     }
-    
-    const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY || 'test-secret', {
-        expiresIn: '1h', // 1 hour expires
-    });
-
-    return accessToken;
 }
 
 exports.getUserById = async (userId) => {
