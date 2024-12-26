@@ -7,6 +7,10 @@ const mongoose = require('mongoose');
 const blacklistedTokens = new Set();
 const refreshTokenSet = new Set();
 
+// 將 Token 集合導出，在測試中操作
+exports.refreshTokenSet = refreshTokenSet;
+exports.blacklistedTokens = blacklistedTokens;
+
 // 新增 token 到黑名單
 const addTokenToBlacklist = (token) => {
     blacklistedTokens.add(token);
@@ -112,15 +116,18 @@ exports.logout = async (accessToken, refreshToken) => {
 }
 
 exports.getNewToken = async (userId, refreshToken) => {
-    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
-
-    if (refreshTokenSet.has(refreshToken)) {
-        const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY, {
-            expiresIn: '1h', // 1 hour expires
-        });
-
-        return accessToken;
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : new mongoose.Types.ObjectId(userId);
+    
+    // 拋出錯誤，如果 refresh token 不存在
+    if (!refreshTokenSet.has(refreshToken)) {
+        throw new APIError(401, "Invalid or expired refresh token");
     }
+    
+    const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY || 'test-secret', {
+        expiresIn: '1h', // 1 hour expires
+    });
+
+    return accessToken;
 }
 
 exports.getUserById = async (userId) => {
