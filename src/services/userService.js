@@ -7,6 +7,9 @@ const mongoose = require('mongoose');
 const blacklistedTokens = new Set();
 const refreshTokenSet = new Set();
 
+// 將 Token 集合導出，在測試中操作
+exports.refreshTokenSet = refreshTokenSet;
+exports.blacklistedTokens = blacklistedTokens;
 const COUNTY_TOWNSHIPS = {
     '台北市': ['中正區', '大同區', '中山區', '松山區', '大安區', '萬華區', '信義區', '士林區', '北投區', '內湖區', '南港區', '文山區'],
     '新北市': ['板橋區', '三重區', '中和區', '永和區', '新莊區', '新店區', '樹林區', '鶯歌區', '三峽區', '淡水區', '汐止區', '瑞芳區', '土城區', '蘆洲區', '五股區', '泰山區', '林口區', '深坑區', '石碇區', '坪林區', '三芝區', '石門區', '八里區', '平溪區', '雙溪區', '貢寮區', '金山區', '萬里區', '烏來區'],
@@ -138,15 +141,24 @@ exports.logout = async (accessToken, refreshToken) => {
 }
 
 exports.getNewToken = async (userId, refreshToken) => {
-    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : mongoose.Types.ObjectId.createFromHexString(userId);
-
-    if (refreshTokenSet.has(refreshToken)) {
+    const userObjectId = userId instanceof mongoose.Types.ObjectId ? userId : new mongoose.Types.ObjectId(userId);
+    
+    // 拋出錯誤，如果 refresh token 不存在
+    if (!refreshTokenSet.has(refreshToken)) {
+        throw new APIError(401, "Invalid or expired refresh token");
+    else {
         const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY, {
             expiresIn: '1m', // 1 hour expires
         });
 
         return accessToken;
     }
+    
+    const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY || 'test-secret', {
+        expiresIn: '1h', // 1 hour expires
+    });
+
+    return accessToken;
 }
 
 exports.getUserById = async (userId) => {
