@@ -244,7 +244,7 @@ describe('User Service', () => {
                 expect(jwt.sign).toHaveBeenCalledWith(
                     { userId },
                     process.env.SECRET_KEY || 'test-secret',
-                    { expiresIn: '1h' }
+                    { expiresIn: '1m' }
                 );
             });
 
