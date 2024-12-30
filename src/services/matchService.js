@@ -4,6 +4,8 @@ const userService = require('../services/userService');
 const messageService = require('../services/messageService');
 const APIError = require('../errors/APIError');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path = require('path');
 
 exports.updateUserMatchStatus = async (fromUserId, toUserId, status) => {
     if (fromUserId === toUserId) {
@@ -71,14 +73,28 @@ exports.getFriendListByUserId = async (userId) => {
             let friendId = (friendList[i].userAId == userId) ? friendList[i].userBId : friendList[i].userAId;
             let friendNickname = await userService.getUserNicknameById(friendId);
             let friendLatestMessage = await messageService.getLatestMessage(userId, friendId);
-            let friendObj = {
-                "friendId": friendId,
-                "friendNickname": friendNickname,
-                "friendLatestMessage": friendLatestMessage
-            };
-            
-            console.log(friendObj);
-            friendInfoList[i] = friendObj;
+            let friendProfilePicturePath = await userService.getProfilePicturePathByUserId(userId);
+            const imagePath = path.join(__dirname, "../", friendProfilePicturePath);
+
+            fs.readFile(imagePath, (err, data) => {
+                if (err) {
+                    return res.status(500).json({ error: 'Failed to read image' });
+                }
+                const base64Image = data.toString('base64');
+                const ext = path.extname(friendProfilePicturePath).toLowerCase();
+                const mimeType = ext === '.png' ? 'image/png' : ext === '.jpeg' || ext === '.jpg' ? 'image/jpeg' : 'application/octet-stream';
+
+                let friendObj = {
+                    "friendId": friendId,
+                    "friendNickname": friendNickname,
+                    "friendLatestMessage": friendLatestMessage,
+                    "friendProfilePicture": base64Image,
+                    mimeType: mimeType,
+                };
+                
+                console.log(friendObj);
+                friendInfoList[i] = friendObj;
+            });
         }
         return friendInfoList;
         
