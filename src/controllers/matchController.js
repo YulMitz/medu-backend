@@ -44,10 +44,8 @@ exports.getFriendListByUserId = async (req, res) => {
 exports.getMatchCardByUserId = async (req, res) => {
     try {
         const matchCard = await matchService.getMatchCardByUserId(req.user.userId);
-        if(matchCard)
-            res.status(200).json({ matchCard: matchCard });
-        else
-            res.status(200).json({ matchCard: "" });
+        res.status(200).json({ matchCard: matchCard });
+        
     } catch (error) {
         if(error instanceof APIError){
             res.status(error.statusCode).json({ message: error.message });

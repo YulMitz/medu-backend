@@ -99,7 +99,9 @@ exports.getMatchCardByUserId = async (userId) => {
             const user = await userService.getRandomUserExcludeCollection(userObjectId, checkUserSet);
 
             if (!user) {
-                return null;
+                return matchCard = {
+                    userId: ""
+                };
             }
 
             checkUserSet.add(user._id.toString());
