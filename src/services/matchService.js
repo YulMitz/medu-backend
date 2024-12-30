@@ -73,7 +73,7 @@ exports.getFriendListByUserId = async (userId) => {
             let friendId = (friendList[i].userAId == userId) ? friendList[i].userBId : friendList[i].userAId;
             let friendNickname = await userService.getUserNicknameById(friendId);
             let friendLatestMessage = await messageService.getLatestMessage(userId, friendId);
-            let friendProfilePicturePath = await userService.getProfilePicturePathByUserId(userId);
+            let friendProfilePicturePath = await userService.getProfilePicturePathByUserId(friendId);
             const imagePath = path.join(__dirname, "../", friendProfilePicturePath);
 
             fs.readFile(imagePath, (err, data) => {
