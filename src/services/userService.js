@@ -113,7 +113,7 @@ exports.login = async (username, password) => {
     }
 
     const accessToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
-        expiresIn: '1m', // 1 hour expires
+        expiresIn: '1h', // 1 hour expires
     });
 
     const refreshToken = jwt.sign({ userId: user._id }, process.env.SECRET_KEY, {
@@ -148,7 +148,7 @@ exports.getNewToken = async (userId, refreshToken) => {
         throw new APIError(401, "Invalid or expired refresh token");
     } else {
         const accessToken = jwt.sign({ userId: userObjectId }, process.env.SECRET_KEY, {
-            expiresIn: '1m', // 1 hour expires
+            expiresIn: '1h', // 1 hour expires
         });
 
         return accessToken;
