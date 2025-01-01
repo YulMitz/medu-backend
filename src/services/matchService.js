@@ -60,42 +60,53 @@ exports.getFriendListByUserId = async (userId) => {
             $and: [
                 { "matchStatus.userAtoBstatus": "like" },
                 { "matchStatus.userBtoAstatus": "like" },
-            ],
-            $or: [
-                { userAId: userId },
-                { userBId: userId }
+                {
+                    $or: [
+                        { userAId: userId },
+                        { userBId: userId }
+                    ]
+                }
             ]
         }).lean();
         
         let friendInfoList = [];
-
+        console.log(friendList.length)
+        console.log("-------------------------------")
+        
         for (let i = 0; i < friendList.length; i++) {
+            console.log("friend " + i)
+
+
             let friendId = (friendList[i].userAId == userId) ? friendList[i].userBId : friendList[i].userAId;
             let friendNickname = await userService.getUserNicknameById(friendId);
             let friendLatestMessage = await messageService.getLatestMessage(userId, friendId);
             let friendProfilePicturePath = await userService.getProfilePicturePathByUserId(friendId);
             const imagePath = path.join(__dirname, "../", friendProfilePicturePath);
-
+            let base64Image;
+            let mimeType;
             fs.readFile(imagePath, (err, data) => {
+
                 if (err) {
                     return res.status(500).json({ error: 'Failed to read image' });
                 }
-                const base64Image = data.toString('base64');
+                base64Image = data.toString('base64');
                 const ext = path.extname(friendProfilePicturePath).toLowerCase();
-                const mimeType = ext === '.png' ? 'image/png' : ext === '.jpeg' || ext === '.jpg' ? 'image/jpeg' : 'application/octet-stream';
-
-                let friendObj = {
-                    "friendId": friendId,
-                    "friendNickname": friendNickname,
-                    "friendLatestMessage": friendLatestMessage,
-                    "friendProfilePicture": base64Image,
-                    mimeType: mimeType,
-                };
-                
-                console.log(friendObj);
-                friendInfoList[i] = friendObj;
+                mimeType = ext === '.png' ? 'image/png' : ext === '.jpeg' || ext === '.jpg' ? 'image/jpeg' : 'application/octet-stream';
             });
+            
+            let friendObj = {
+                "friendId": friendId,
+                "friendNickname": friendNickname,
+                "friendLatestMessage": friendLatestMessage,
+                "friendProfilePicture": base64Image,
+                mimeType: mimeType,
+            };
+            
+            console.log(friendObj.friendNickname);
+            friendInfoList.push(friendObj);
         }
+        console.log(friendInfoList.length)
+        console.log("-------------------------------")
         return friendInfoList;
         
     } catch (error) {
