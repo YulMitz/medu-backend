@@ -4,7 +4,7 @@ const userService = require('../services/userService');
 const messageService = require('../services/messageService');
 const APIError = require('../errors/APIError');
 const mongoose = require('mongoose');
-const fs = require('fs');
+const fs = require('fs').promises;
 const path = require('path');
 
 exports.updateUserMatchStatus = async (fromUserId, toUserId, status) => {
@@ -82,31 +82,36 @@ exports.getFriendListByUserId = async (userId) => {
             let friendLatestMessage = await messageService.getLatestMessage(userId, friendId);
             let friendProfilePicturePath = await userService.getProfilePicturePathByUserId(friendId);
             const imagePath = path.join(__dirname, "../", friendProfilePicturePath);
-            let base64Image;
-            let mimeType;
-            fs.readFile(imagePath, (err, data) => {
+            // data = await fs.readFile(imagePath, (err, data) => {
 
-                if (err) {
-                    return res.status(500).json({ error: 'Failed to read image' });
-                }
-                base64Image = data.toString('base64');
-                const ext = path.extname(friendProfilePicturePath).toLowerCase();
-                mimeType = ext === '.png' ? 'image/png' : ext === '.jpeg' || ext === '.jpg' ? 'image/jpeg' : 'application/octet-stream';
-            });
-            
+            //     if (err) {
+            //         return res.status(500).json({ error: 'Failed to read image' });
+            //     }
+            //     base64Image = data.toString('base64');
+            //     const ext = path.extname(friendProfilePicturePath).toLowerCase();
+            //     mimeType = ext === '.png' ? 'image/png' : ext === '.jpeg' || ext === '.jpg' ? 'image/jpeg' : 'application/octet-stream';
+            //     return mimeType;
+            // });
+            data = await fs.readFile(imagePath);
+            const base64Image = data.toString('base64');
+            const ext = path.extname(friendProfilePicturePath).toLowerCase();
+            const mimeType = ext === '.png' ? 'image/png' : ext === '.jpeg' || ext === '.jpg' ? 'image/jpeg' : 'application/octet-stream';
+
             let friendObj = {
                 "friendId": friendId,
                 "friendNickname": friendNickname,
                 "friendLatestMessage": friendLatestMessage,
                 "friendProfilePicture": base64Image,
-                mimeType: mimeType,
+                "mimeType": mimeType,
             };
-            
+
             console.log(friendObj.friendNickname);
             friendInfoList.push(friendObj);
         }
-        console.log(friendInfoList.length)
+        console.log(friendInfoList[0].mimeType)
         console.log("-------------------------------")
+
+        for(let i = 0; i < friendList.length; i++)
         return friendInfoList;
         
     } catch (error) {
