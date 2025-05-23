@@ -8,27 +8,19 @@ pipeline {
             steps {
                 script {
                     dir("${PROJECT_DIR}") {
-                        // 使用 withCredentials 加載 SSH 密鑰
-                        withCredentials([sshUserPrivateKey(credentialsId: 'mulkooo', keyFileVariable: 'SSH_KEY')]) {
-                            // 使用 env 傳遞 SSH 密钥
-                            env.SSH_KEY_PATH = '${SSH_KEY}'
-                            
-                            // 配置 Git，避免在 sh 中直接插值
-                            sh """
-                            git config --global --add safe.directory "*"
-                            git config core.sshCommand "ssh -i ${env.SSH_KEY_PATH} -o StrictHostKeyChecking=no"
-
-                            # 拉取最新的代碼
-                            git fetch origin
-                            LOCAL_COMMIT=\$(git rev-parse HEAD)
-                            REMOTE_COMMIT=\$(git rev-parse @{u})
-                            if [ "\$LOCAL_COMMIT" != "\$REMOTE_COMMIT" ]; then
-                                echo "New commits detected. Pulling updates..."
-                                git pull origin main
-                            else
-                                echo "No updates found."
-                            fi
-                            """
+                        // 配置 Git，避免在 sh 中直接插值
+                        sh """
+                        # 拉取最新的代碼
+                        git fetch origin
+                        LOCAL_COMMIT=\$(git rev-parse HEAD)
+                        REMOTE_COMMIT=\$(git rev-parse @{u})
+                        if [ "\$LOCAL_COMMIT" != "\$REMOTE_COMMIT" ]; then
+                            echo "New commits detected. Pulling updates..."
+                            git pull origin main
+                        else
+                            echo "No updates found."
+                        fi
+                        """
                         }
                     }
                 }
