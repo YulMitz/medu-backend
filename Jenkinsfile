@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PROJECT_DIR = '/home/mulkooo/built/medu-backend-build'  // mulkooo 用戶的 repo 路徑
+        PROJECT_DIR = '/home/mulkooo/medu-backend'  // mulkooo 用戶的 repo 路徑
     }
     stages {
         stage('Check for Updates') {
