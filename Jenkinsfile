@@ -9,7 +9,7 @@ pipeline {
                 script {
                     dir("${PROJECT_DIR}") {
                         // 使用 withCredentials 加載 SSH 密鑰
-                        withCredentials([sshUserPrivateKey(credentialsId: '02823815-31df-4987-8fd9-5933fbbe60d2', keyFileVariable: 'SSH_KEY')]) {
+                        withCredentials([sshUserPrivateKey(credentialsId: 'mulkooo', keyFileVariable: 'SSH_KEY')]) {
                             // 使用 env 傳遞 SSH 密钥
                             env.SSH_KEY_PATH = '${SSH_KEY}'
                             
