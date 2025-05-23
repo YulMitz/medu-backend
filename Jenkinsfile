@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PROJECT_DIR = '/home/mulkooo/medu-backend'  // mulkooo 用戶的 repo 路徑
+        PROJECT_DIR = '/home/mulkooo/built/medu-backend-build'  // mulkooo 用戶的 repo 路徑
     }
     stages {
         stage('Check for Updates') {
@@ -11,7 +11,6 @@ pipeline {
                         // 配置 Git，避免在 sh 中直接插值
                         sh """
                         # 拉取最新的代碼
-                        sudo chown -R jenkins:jenkins /home/mulkooo/medu-backend
                         git fetch origin
                         LOCAL_COMMIT=\$(git rev-parse HEAD)
                         REMOTE_COMMIT=\$(git rev-parse @{u})
