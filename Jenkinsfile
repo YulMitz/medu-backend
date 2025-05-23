@@ -29,11 +29,11 @@ pipeline {
             steps {
                 dir("${PROJECT_DIR}/src") {
                     sh '''
-                    sudo -nu mulkooo npm install
+                    sudo npm install
                     # 若需要執行測試，啟用下一行
-                    sudo -nu mulkooo npm test
+                    sudo npm test
                     # 使用 shiloh 用戶運行 pm2
-                    sudo -nu mulkooo /usr/local/bin/pm2 restart /home/mulkooo/medu-backend/src/server.js
+                    sudo /usr/local/bin/pm2 restart /home/mulkooo/medu-backend/src/server.js
                     '''
                 }
             }
