@@ -21,7 +21,6 @@ pipeline {
                             echo "No updates found."
                         fi
                         """
-                        }
                     }
                 }
             }
