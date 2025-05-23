@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        PROJECT_DIR = '/home/shiloh/repo/medu-backend'  // shiloh 用戶的 repo 路徑
+        PROJECT_DIR = '/home/mulkooo/medu-backend'  // mulkooo 用戶的 repo 路徑
     }
     stages {
         stage('Check for Updates') {
@@ -10,7 +10,7 @@ pipeline {
                     dir("${PROJECT_DIR}") {
                         // 使用 withCredentials 加載 SSH 密鑰
                         withCredentials([sshUserPrivateKey(credentialsId: '02823815-31df-4987-8fd9-5933fbbe60d2', keyFileVariable: 'SSH_KEY')]) {
-                            // 使用 env 传递 SSH 密钥
+                            // 使用 env 傳遞 SSH 密钥
                             env.SSH_KEY_PATH = '${SSH_KEY}'
                             
                             // 配置 Git，避免在 sh 中直接插值
@@ -38,11 +38,11 @@ pipeline {
             steps {
                 dir("${PROJECT_DIR}/src") {
                     sh '''
-                    sudo -u shiloh npm install
+                    sudo -u mulkooo npm install
                     # 若需要執行測試，啟用下一行
-                    sudo -u shiloh npm test
+                    sudo -u mulkooo npm test
                     # 使用 shiloh 用戶運行 pm2
-                    sudo -u shiloh /usr/local/bin/pm2 restart /home/shiloh/repo/medu-backend/src/server.js
+                    sudo -u mulkooo /usr/local/bin/pm2 restart /home/mulkooo/medu-backend/src/server.js
                     '''
                 }
             }
